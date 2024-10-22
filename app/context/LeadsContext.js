@@ -9,16 +9,28 @@ export const LeadsProvider = ({ children }) => {
   const [leads, setLeads] = useState([]);
 
   // Fetch leads from the API endpoint
-  const fetchLeads = async () => {
-    try {
-      const response = await fetch('/api/leads');
-      if (!response.ok) throw new Error('Failed to fetch leads.');
-      const data = await response.json();
-      setLeads(data);
-    } catch (error) {
-      console.error("Failed to fetch leads:", error);
-    }
-  };
+//   const fetchLeads = async () => {
+//     try {
+//       const response = await fetch('/api/leads');
+//       if (!response.ok) throw new Error('Failed to fetch leads.');
+//       const data = await response.json();
+//       setLeads(data);
+//     } catch (error) {
+//       console.error("Failed to fetch leads:", error);
+//     }
+//   };
+
+    const fetchLeads = async () => {
+        try {
+        const response = await fetch('/api/leads');
+        if (!response.ok) throw new Error('Failed to fetch leads.');
+        const data = await response.json();
+        console.error("leads in fetch:", data);
+        setLeads(data);
+        } catch (error) {
+        console.error("Failed to fetch leads:", error);
+        }
+    };
 
   // Add a new lead using the API endpoint
   const addLead = async (lead) => {
@@ -30,14 +42,26 @@ export const LeadsProvider = ({ children }) => {
         },
         body: JSON.stringify(lead),
       });
-
+  
       if (!response.ok) throw new Error('Failed to add lead.');
       const newLead = await response.json();
-      setLeads((prevLeads) => [...prevLeads, newLead]);
+  
+      console.log("newLead:", newLead);
+  
+      // Log the previous leads inside the callback to get the actual state
+      setLeads((prevLeads) => {
+        console.log("Previous leads in setLeads:", prevLeads);
+        return [...prevLeads, newLead];
+      });
     } catch (error) {
       console.error("Failed to add lead:", error);
     }
   };
+
+  useEffect(() => {
+    console.log("Updated leads:", leads);
+  }, [leads]);
+  
 
   // Update the state of a lead
   const updateLeadState = async (id) => {

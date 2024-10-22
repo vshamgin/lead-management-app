@@ -26,6 +26,7 @@ export default function PublicLeadForm() {
     };
   
     try {
+      console.log("newLead onSubmit:", newLead); 
       await addLead(newLead); // Add the lead using the addLead function
       reset(); // Reset the form after submission
       setSelectedVisaCategories([]); // Reset visa categories selection

@@ -18,14 +18,14 @@ const InternalLeadsList = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (isAuthenticatedAlma) {
+
         setIsLoading(true);
         await fetchLeads();
         setIsLoading(false);
-      }
+      
     };
     fetchData();
-  }, [isAuthenticatedAlma]);
+  }, []);
 
   const handleSearchChange = (event) => setSearchQuery(event.target.value);
   const handleStatusChange = (event) => setStatusFilter(event.target.value);
@@ -63,15 +63,6 @@ const InternalLeadsList = () => {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
         <CircularProgress />
-      </Box>
-    );
-  }
-
-  if (!isAuthenticatedAlma) {
-    return (
-      <Box textAlign="center" mt={5}>
-        <Typography variant="h5">Access Denied</Typography>
-        <Typography variant="body1">Please log in to view this page.</Typography>
       </Box>
     );
   }
