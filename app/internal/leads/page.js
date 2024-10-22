@@ -1,10 +1,10 @@
-"use client";
+"use client"
 
 import { useLeads } from '../../context/LeadsContext';
 import { useAuth } from '../../context/AuthContext';
 import { Button, Table, TableRow, TableCell, TableBody, Typography, Box, TableHead, TableContainer, Paper, InputBase, Select, MenuItem, IconButton, TablePagination, TableSortLabel, CircularProgress, Avatar } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const InternalLeadsList = () => {
   const { leads, fetchLeads, updateLeadState } = useLeads();
@@ -14,18 +14,20 @@ const InternalLeadsList = () => {
   const [page, setPage] = useState(0);
   const [sortConfig, setSortConfig] = useState({ key: '', direction: '' });
   const [isLoading, setIsLoading] = useState(false);
+  const hasFetchedLeads = useRef(false);
   const rowsPerPage = 5;
 
   useEffect(() => {
     const fetchData = async () => {
-      if (isAuthenticatedAlma) {
+      if (isAuthenticatedAlma && !hasFetchedLeads.current) {
         setIsLoading(true);
         await fetchLeads();
         setIsLoading(false);
+        hasFetchedLeads.current = true; // Mark as fetched to prevent re-fetching
       }
     };
     fetchData();
-  }, [isAuthenticatedAlma]);
+  }, [isAuthenticatedAlma, fetchLeads]);
 
   const handleSearchChange = (event) => setSearchQuery(event.target.value);
   const handleStatusChange = (event) => setStatusFilter(event.target.value);
@@ -121,10 +123,42 @@ const InternalLeadsList = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell><b>Name</b></TableCell>
-                <TableCell><b>Submitted</b></TableCell>
-                <TableCell><b>Status</b></TableCell>
-                <TableCell><b>Country</b></TableCell>
+                <TableCell>
+                  <TableSortLabel
+                    active={sortConfig.key === 'firstName'}
+                    direction={sortConfig.direction}
+                    onClick={() => handleSort('firstName')}
+                  >
+                    <b>Name</b>
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell>
+                  <TableSortLabel
+                    active={sortConfig.key === 'submitted'}
+                    direction={sortConfig.direction}
+                    onClick={() => handleSort('submitted')}
+                  >
+                    <b>Submitted</b>
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell>
+                  <TableSortLabel
+                    active={sortConfig.key === 'state'}
+                    direction={sortConfig.direction}
+                    onClick={() => handleSort('state')}
+                  >
+                    <b>Status</b>
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell>
+                  <TableSortLabel
+                    active={sortConfig.key === 'country'}
+                    direction={sortConfig.direction}
+                    onClick={() => handleSort('country')}
+                  >
+                    <b>Country</b>
+                  </TableSortLabel>
+                </TableCell>
                 <TableCell><b>Action</b></TableCell>
               </TableRow>
             </TableHead>

@@ -14,10 +14,6 @@ export default function Home() {
         <Link href="/internal/login">
           <Button variant="contained" color="secondary">Internal Login</Button>
         </Link>
-        <Link href="/internal/leads">
-          <Button variant="contained" color="secondary">Internal Check Leads</Button>
-        </Link>
-        <a href='/internal/leads'>Internal Check Leads</a>
       </Box>
     </Box>
   );

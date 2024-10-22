@@ -4,10 +4,11 @@ import { useForm } from 'react-hook-form';
 import { TextField, Button, Box, Typography, Checkbox, FormControlLabel, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 import { useLeads } from '../context/LeadsContext';
 import { useState } from 'react';
+import AppHeader from '../components/AppHeader';
 
 export default function PublicLeadForm() {
   const { addLead } = useLeads();
-  const { register, handleSubmit, reset, setValue } = useForm();
+  const { register, handleSubmit, reset, setValue, formState: { errors }, clearErrors } = useForm();
   const [selectedVisaCategories, setSelectedVisaCategories] = useState([]);
   const [resumeFile, setResumeFile] = useState(null);
   
@@ -26,13 +27,13 @@ export default function PublicLeadForm() {
     };
   
     try {
-      await addLead(newLead); // Add the lead using the addLead function
+      await addLead(newLead);
       reset(); // Reset the form after submission
-      setSelectedVisaCategories([]); // Reset visa categories selection
-      setResumeFile(null); // Reset file input
-      window.location.href = '/thank-you'; // Redirect to thank you page
+      setSelectedVisaCategories([]);
+      setResumeFile(null);
+      window.location.href = '/thank-you';
     } catch (error) {
-      console.error("Failed to submit lead:", error); // Log if there's any error during submission
+      console.error("Failed to submit lead:", error);
     }
   };
   
@@ -78,12 +79,32 @@ export default function PublicLeadForm() {
   };
   //////////
 
+  const handleCountryChange = (event) => {
+    setValue("country", event.target.value);
+    clearErrors("country");
+  };
+
   return (
-    <Box component="form" onSubmit={handleSubmit(onSubmit)} display="flex" flexDirection="column" alignItems="center" gap={2} mt={5}>
-      <Typography variant="h5" gutterBottom>Want to understand your visa options?</Typography>
-      <Typography variant="body2" textAlign="center">
-        Submit the form below and our team of experienced attorneys will review your information and send a preliminary assessment of your case based on your goals.
+    <>
+    <AppHeader />
+    <Box
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      py={4} // Padding for spacing
+      width="100%"
+    >
+      <Typography variant="h4" align="center" maxWidth="80%">
+        Get An Assessment On Your Immigration Case
       </Typography>
+    </Box>
+    <Box component="form" onSubmit={handleSubmit(onSubmit)} display="flex" flexDirection="column" alignItems="center" gap={2} mt={5} p={5}>
+      <Typography variant="h5" gutterBottom>Want to understand your visa options?</Typography>
+        <Box maxWidth="500px" width="100%">
+        <Typography variant="body1" textAlign="center">
+          Submit the form below and our team of experienced attorneys will review your information and send a preliminary assessment of your case based on your goals.
+        </Typography>
+      </Box>
 
       <Box width="80%" maxWidth="500px" display="flex" flexDirection="column" gap={2}>
         <TextField {...register("firstName", { required: true })} label="First Name" fullWidth />
@@ -91,9 +112,9 @@ export default function PublicLeadForm() {
         <TextField {...register("email", { required: true })} label="Email" type="email" fullWidth />
         
         {/* Dropdown for Country */}
-        <FormControl fullWidth>
+        <FormControl fullWidth error={!!errors.country}>
           <InputLabel>Country of Citizenship</InputLabel>
-          <Select {...register("country", { required: false })} defaultValue="United States">
+          <Select {...register("country", { required: true })} defaultValue="" onChange={handleCountryChange}>
             <MenuItem value="United States">United States</MenuItem>
             <MenuItem value="Canada">Canada</MenuItem>
             <MenuItem value="India">India</MenuItem>
@@ -147,10 +168,11 @@ export default function PublicLeadForm() {
         </Button>
 
         {/* Temp Data Button */}
-          <Button onClick={setTempData} variant="outlined" color="secondary" fullWidth>
-          Fill with Temp Data
-        </Button>
+          {/* <Button onClick={setTempData} variant="outlined" color="secondary" fullWidth>
+          Fill with Mock Data
+        </Button> */}
       </Box>
     </Box>
+    </>
   );
 }
