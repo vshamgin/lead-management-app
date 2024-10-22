@@ -1,36 +1,177 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Start the application:
+npm run dev
 
-## Getting Started
 
-First, run the development server:
+# Lead Management App
 
-```bash
+## Overview
+
+The **Lead Management App** is a web-based application designed to collect and manage leads for individuals seeking information on immigration services. Users can fill out a form, providing their personal information, visa preferences, and other relevant details, which the system then stores for further processing. The app leverages client-side storage and a context-based approach for managing authentication and state.
+
+## Architecture
+
+The application is built using the following technologies:
+
+- **Frontend Framework**: React.js
+- **Component Library**: Material UI (MUI)
+- **State Management**: React Context API
+- **Form Handling**: react-hook-form
+- **Storage**: Browser's localStorage
+- **Deployment**: (Specify if deployed, e.g., AWS S3, Vercel, etc.)
+
+### Directory Structure
+
+The project is organized as follows:
+
+lead-management-app/
+│
+├── app/
+│   ├── components/          # Reusable UI components (e.g., AppHeader.js)
+│   ├── context/             # Contexts for app-wide state (e.g., AuthContext.js, LeadsContext.js)
+│   ├── internal/            # Internal pages and business logic (e.g., leads, login)
+│   │   ├── leads/
+│   │   └── login/
+│   ├── public-form/         # Public-facing components and form
+│   └── thank-you/           # Thank you page after form submission
+│
+├── fonts/                   # Custom fonts if used
+├── public/                  # Public assets like images, favicon, etc.
+├── styles/                  # Global styles if any
+├── .gitignore
+├── README.md                # Documentation file
+├── package.json             # Project dependencies and scripts
+└── yarn.lock or package-lock.json # Dependency lock file
+
+
+
+## User Flows
+
+### 1. Authentication Flow
+
+- **Purpose**: Manage user login and logout.
+- **Components**: `AuthContext`, `AuthProvider`, `useAuth`
+- **State Persistence**: Auth state is saved using `localStorage`.
+- **Flow**:
+  - On login, `AuthProvider` saves the authentication state to `localStorage` and updates the context.
+  - On logout, `AuthProvider` clears the state from `localStorage`.
+  - Authentication status is globally available across the app through `useAuth`.
+
+### 2. Lead Form Submission Flow
+
+- **Purpose**: Collect user data for lead generation.
+- **Components**: `PublicLeadForm`, `useLeads`, `react-hook-form`
+- **Data Collected**:
+  - First Name
+  - Last Name
+  - Email
+  - Country of Citizenship
+  - LinkedIn / Personal Website URL
+  - Visa Preferences
+  - Resume Upload
+  - Open Text Area for additional information
+- **Form Handling**:
+  - `react-hook-form` manages form state and validation.
+  - Data is submitted, validated, and passed to the lead management context (`useLeads`).
+  - The `PublicLeadForm` component provides functionality to add random test data for quicker submission during testing.
+
+### 3. Context and State Management
+
+#### `AuthContext` (`app/context/AuthContext.js`)
+
+- **Purpose**: Manage authentication state across the application.
+- **State Variables**:
+  - `isAuthenticatedAlma`: Boolean to check if the user is logged in.
+  - Methods: `login()`, `logout()`
+- **Persistent Storage**: State saved in `localStorage`.
+
+#### `LeadsContext` (`app/context/LeadsContext.js`)
+
+- **Purpose**: Store lead information and manage CRUD operations.
+- **State Variables**:
+  - `leads`: Array to store leads information.
+  - Methods: `addLead()`, `removeLead()`, `updateLead()`
+- **Data Source**: Leads are managed on the client side (useful for testing purposes).
+
+### 4. Form Field Validation
+
+- **Library**: `react-hook-form`
+- **Validation**:
+  - Required fields: `firstName`, `lastName`, `email`, `country`, `openText`
+  - Custom rules can be added to enhance the user input quality.
+
+## Component Overview
+
+### 1. App Header (`components/AppHeader.js`)
+
+- **Purpose**: Provide a consistent header across different views in the application.
+- **Details**: Contains navigation, branding, and possible user actions (like logout).
+
+### 2. Public Lead Form (`public-form/page.js`)
+
+- **Purpose**: The main form users interact with to submit their information.
+- **Details**:
+  - Form fields are built using MUI's `TextField`, `Select`, `Checkbox`, etc.
+  - Handles form submission and redirects users to a 'Thank You' page after successful submission.
+
+### 3. Lead Submission Review (`internal/leads/page.js`)
+
+- **Purpose**: Interface for administrators to review and manage incoming leads.
+- **Details**: Allows administrators to update, delete, or approve leads from within the app.
+
+## Environment Setup
+
+### Prerequisites
+
+- **Node.js** >= 14.x
+- **npm** or **yarn**
+
+### Getting Started
+
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd lead-management-app
+install dependencies:
+
+bash
+
+npm install
+# or
+yarn install
+
+Start the application:
+
+bash
+
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Deployment
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+    Build: Use npm run build or yarn build to create an optimized production build.
+    Deploy: The project can be deployed on various platforms such as AWS, Vercel, Netlify, etc.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Design Considerations
+User Interface
 
-## Learn More
+    Material UI: For consistent design and easy-to-use components.
+    Responsive Layout: Design ensures smooth performance across desktop, tablet, and mobile devices.
+    Accessibility: Use of aria attributes for better accessibility.
 
-To learn more about Next.js, take a look at the following resources:
+Security
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+    Data Storage: Limited use of localStorage for authentication state.
+    User Data Protection: Data is managed locally, and no sensitive information is stored without user consent.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Performance
 
-## Deploy on Vercel
+    Lazy Loading: Components and data are loaded only when necessary.
+    Efficient State Management: React's Context API efficiently manages state without introducing unnecessary complexity.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Future Enhancements
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+    Backend Integration: Extend the current client-only system to integrate with a backend service for lead storage.
+    User Authentication: More robust user authentication system (e.g., OAuth, JWT-based).
+    Role Management: Different roles (admin, user) to enhance application capabilities.
+    Enhanced Input Validation: Server-side validation to ensure consistency.
